@@ -1,0 +1,13 @@
+<!-- (keyup.enter)="newSearch.emit(txtSearch.value)" //event can also be emitted from the template -->
+<!-- country-search -->
+<div class="flex gap-3">
+  <input
+    type="text"
+    class="input input-accent"
+    autofocus
+    [placeholder]="placeholder()"
+    #txtSearch
+    (keyup.enter)="onSearch(txtSearch.value)"
+  />
+  <button class="btn btn-secondary" (click)="onSearch(txtSearch.value)">Search</button>
+</div>
