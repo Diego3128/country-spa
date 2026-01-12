@@ -1,3 +1,7 @@
 <app-country-search (newSearch)="onSearchCapital($event)" placeholder="Search by capital" />
 
-<app-country-list />
+@if(error()){
+<p>{{ error() }}</p>
+}@else{
+<app-country-list [countries]="countries()" />
+}
