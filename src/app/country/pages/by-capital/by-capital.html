@@ -1,7 +1,9 @@
-<app-country-search (newSearch)="onSearchCapital($event)" placeholder="Search by capital" />
+<app-country-search (newSearch)="searchValue.set($event)" placeholder="Search by capital" />
 
-@if(error()){
-<p>{{ error() }}</p>
-}@else{
-<app-country-list [countries]="countries()" />
+@if (countryResource.isLoading()) {
+<p>loading.....</p>
+} @if(countryResource.error()){
+<p>{{ countryResource.error()?.cause }}</p>
+}@else{ } @if (countryResource.hasValue()) {
+<app-country-list [countries]="countryResource.value()" />
 }

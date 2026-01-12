@@ -1,9 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, resource, signal } from '@angular/core';
 import { CountryList } from '../../components/country-list/country-list';
 import { CountrySearch } from '../../components/country-search/country-search';
 import { CountryService } from '../../services/country.service';
-import { Country } from '../../interfaces/rest-countries.interfaces';
-import { HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-by-capital',
@@ -13,22 +12,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ByCapital {
   countryService = inject(CountryService);
 
-  isLoading = signal<boolean>(false);
-  error = signal<string | null>(null);
-  countries = signal<Country[]>([]);
+  searchValue = signal<string>('');
 
-  onSearchCapital = (search: string) => {
-    this.isLoading.set(true);
-    this.error.set(null);
-    this.countryService.searchCountriesByCapital(search).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        this.countries.set(response);
-      }, error: (error: string) => {
-        console.log({ error });
-        this.isLoading.set(false);
-        this.error.set(error);
-      }
-    })
-  };
+  countryResource = resource({
+    params: () => ({ search: this.searchValue() }),
+    loader: async ({ params, abortSignal, previous }) => {
+      if (!params.search) return [];
+      return firstValueFrom(this.countryService.searchCountriesByCapital(params.search))
+    }
+  })
 }
