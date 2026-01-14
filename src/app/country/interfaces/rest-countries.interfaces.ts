@@ -4,7 +4,7 @@ export interface Country {
   status: string;
   cca2: string,
   currencies: Currencies;
-  capital: string[];
+  capital?: string[];
   region: string;
   languages: Languages;
   translations: Translations;

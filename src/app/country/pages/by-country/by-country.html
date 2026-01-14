@@ -1,3 +1,8 @@
-<app-country-search (newSearch)="onSearchCountry($event)" placeholder="Search by country" />
+<app-country-search (newSearch)="search.set($event)" placeholder="Search by country" />
 
-<app-country-list [countries]="[]" />
+<app-country-list
+  [tableCaption]="'Countries by name'"
+  [countries]="countryResource.hasValue() ? countryResource.value() : []"
+  [isLoading]="countryResource.isLoading()"
+  [errorMessage]="countryResource.error()?.cause ?? undefined"
+/>

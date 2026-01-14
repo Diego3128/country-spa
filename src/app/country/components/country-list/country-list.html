@@ -1,9 +1,16 @@
 <!-- country list -->
 <section class="py-5 px-2">
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto min-h-52 relative">
+    <!--  -->
+    @if(!isLoading()){
+    <app-loader />
+    }
+    <!--  -->
     <table class="table table-zebra max-w-5xl mx-auto">
       <caption>
-        Countries
+        <div class="divider divider-accent text-xl font-bold">
+          {{ tableCaption() }}
+        </div>
       </caption>
       <thead>
         <tr>
@@ -16,6 +23,8 @@
         </tr>
       </thead>
       <tbody>
+        @if(!isLoading() && !errorMessage() && countries().length > 0 ){
+        <!--  -->
         @for (country of countries(); track country.name.common) {
         <tr>
           <td>{{ country.flag }}</td>
@@ -24,16 +33,18 @@
           </td>
           <td>{{ country.cca2 }}</td>
           <td>{{ country.name.common }}</td>
-          <td>{{ country.capital[0] }}</td>
+          <td>{{ country.capital?.[0] ?? 'No capital' }}</td>
           <td>{{ country.population | number }}</td>
+          <td><a [routerLink]="['/country', 'by-country', country.cca2]">more</a></td>
         </tr>
-        }
+        } }
       </tbody>
-      <!-- <tfoot>
-      <tr>
-        <td>Total</td>
-      </tr>
-    </tfoot> -->
     </table>
+    <!--  -->
+    @if (errorString()) {
+    <div class="mt-4">
+      <app-error-message [errorMessage]="errorString()!" />
+    </div>
+    }
   </div>
 </section>
