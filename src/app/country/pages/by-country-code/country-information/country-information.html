@@ -1,0 +1,184 @@
+<div
+    class="card bg-base-100 shadow-xl max-w-4xl mx-auto mb-20 mt-8 border border-base-300 min-h-dvh"
+>
+    <!-- Header with flag and name -->
+    <div
+        class="card-title flex flex-col sm:flex-row items-center gap-6 px-6 py-4 bg-base-200 rounded-t-xl"
+    >
+        <div class="avatar">
+            @if (country(); as c) {
+            <img
+                class="object-contain w-6/12 max-w-80 mx-auto"
+                [src]="c.flags.svg"
+                [alt]="c.flags.alt || 'Flag of ' + c.name.common"
+            />
+            }
+        </div>
+
+        <div class="text-center sm:text-left">
+            <h1 class="text-4xl font-bold">{{ country().name.common }}</h1>
+            <p class="text-xl opacity-70">{{ country().name.official }}</p>
+        </div>
+    </div>
+
+    <div class="card-body p-6 pt-4">
+        <!-- Quick stats badges -->
+        <div class="flex flex-wrap gap-3 mb-6">
+            <div class="badge badge-lg badge-outline">
+                <p>Region: {{ country().region }}</p>
+            </div>
+            <div class="badge badge-lg badge-outline">
+                <p>Continents: {{ country().continents.join(' • ') }}</p>
+            </div>
+            @if (country().independent) {
+            <div class="badge badge-success badge-lg">Independent</div>
+            } @else {
+            <div class="badge badge-warning badge-lg">Not Independent</div>
+            }
+            <div class="badge badge-neutral badge-lg">{{ country().status }}</div>
+            @if (country().capital?.length) {
+            <div class="badge badge-info badge-lg">
+                Capitals: {{ country().capital?.join(', ') }}
+            </div>
+            }
+        </div>
+
+        <div class="flex gap-3 flex-wrap">
+            <!-- Population -->
+            <div class="stat bg-base-200 rounded-xl p-4 min-w-2/6 w-fit">
+                <div class="stat-title">Population</div>
+                <div class="stat-value text-3xl">
+                    {{ country().population | number }}
+                </div>
+            </div>
+
+            <!-- Currency -->
+            @if (country().currencies; as currencies) {
+            <div class="stat bg-base-200 rounded-xl p-4 min-w-2/6 w-fit">
+                <div class="stat-title">Currency</div>
+                <div class="stat-value text-2xl">
+                    @for (code of currencies | keyvalue; track code.key) {
+                    <div class="text-wrap">
+                        <span class="skeleton skeleton-text"
+                            >{{ code.value.name }} ({{ code.value.symbol }})</span
+                        >
+                        <span class="text-base opacity-60">· {{ code.key }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            <!-- Languages -->
+            @if (country().languages; as langs) {
+            <div class="stat bg-base-200 rounded-xl p-4 min-w-2/6 w-fit">
+                <div class="stat-title">Languages</div>
+                <div class="stat-value text-xl leading-relaxed flex flex-wrap gap-x-3">
+                    @for (lang of langs | keyvalue; track lang.key) {
+                    <span class="text-base opacity-60">· {{ lang.value }}</span>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- More details -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left column -->
+            <div class="flex gap-4 flex-wrap">
+                @if (country().fifa) {
+                <div class="flex flex-col justify-between">
+                    <h3 class="font-semibold text-lg">FIFA Code</h3>
+                    <p class="text-xl">{{ country().fifa }}</p>
+                </div>
+                }
+
+                <div class="flex flex-col justify-between">
+                    <h3 class="font-semibold text-lg">CCA2 Code</h3>
+                    <div class="badge badge-outline text-xl py-4 px-6 mt-1">
+                        {{ country().cca2 }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column - Maps -->
+            <div>
+                <h3 class="font-semibold text-lg mb-3">Maps</h3>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a
+                        [href]="country().maps.googleMaps"
+                        target="_blank"
+                        class="btn btn-outline btn-primary flex-1 gap-2 p-3"
+                    >
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                            />
+                        </svg>
+                        Google Maps
+                    </a>
+
+                    <a
+                        [href]="country().maps.openStreetMaps"
+                        target="_blank"
+                        class="btn btn-outline flex-1 gap-2 p-3"
+                    >
+                        OpenStreetMap
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!--add bordering countries  -->
+        <div class="mt-6">
+            <h3 class="my-3 font-semibold text-lg">Neighboring countries</h3>
+
+            <div class="min-h-16">
+                <app-neighboring-country-list
+                    [neighboringCountriesCodes]="neighboringCountriesCodes()"
+                />
+            </div>
+        </div>
+
+        <!-- country in different languages -->
+        <div class="mt-8">
+            <div tabindex="0" class="collapse collapse-arrow bg-base-100 border-base-300 border">
+                <div class="collapse-title font-semibold">
+                    <h3 class="font-semibold text-lg">Common translations</h3>
+                </div>
+                <div class="collapse-content text-sm">
+                    @if (country().translations; as translations) {
+                    <!--  -->
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra">
+                            <!-- head -->
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Language</th>
+                                    <th>Common</th>
+                                    <th>Official</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (translation of translations | keyvalue; track translation.key)
+                                {
+                                <tr>
+                                    <th>{{ $index + 1 }}</th>
+                                    <td>{{ translation.key }}</td>
+                                    <td>{{ translation.value.common }}</td>
+                                    <td>{{ translation.value.official }}</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="card-footer p-4 pt-0 text-center text-sm opacity-60">
+        Data from REST Countries API • Updated {{ currentTime() | date : 'short' }}
+    </div>
+</div>

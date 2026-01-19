@@ -1,0 +1,23 @@
+@if(isLoadingNeighbors()){
+<div class="skeleton h-20 w-full"></div>
+}
+<!--  -->
+@if (filteredNeighboringCountries(); as countries) {
+<ul class="flex flex-wrap gap-5">
+    @for (country of countries; track country.cca2) {
+    <li>
+        <a
+            [routerLink]="`/country/by-country/${country.cca2}`"
+            class="p-3 flex gap-4 items-center bg-base-200 rounded-xl"
+        >
+            <img
+                class="size-8 object-contain"
+                [src]="country.flags.svg"
+                [alt]="country.flags.alt"
+            />
+            <span class="skeleton skeleton-text">{{ country.name.common }}</span>
+        </a>
+    </li>
+    }
+</ul>
+}

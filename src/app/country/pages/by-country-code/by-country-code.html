@@ -1,0 +1,16 @@
+<div class="px-2.5">
+    @if (countryResource.error()) {
+    <app-not-found [message]="`Country with code '${code}' not found`" />
+    }
+    <!--  -->
+    <app-country-information-loader [isLoading]="countryResource.isLoading()" />
+    <!--  -->
+    @if(countryResource.hasValue()){
+    <!--  -->
+    @if(!countryResource.isLoading() && countryResource.value()){
+    <app-country-information [country]="countryResource.value()!" />
+    }
+    <!--  -->
+    }
+    <!--  -->
+</div>

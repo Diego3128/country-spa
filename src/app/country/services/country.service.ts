@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, delay, map, Observable, throwError } from "rxjs";
-import { Country } from "../interfaces/rest-countries.interfaces";
+import { catchError, delay, map, Observable, of, throwError } from "rxjs";
+import { Country, BasicCountryInfo } from '../interfaces/rest-countries.interfaces';
 import { CountryMapper } from "../mappers/country-mapper";
 
 @Injectable({
@@ -40,5 +40,38 @@ export class CountryService {
           return throwError(() => message)
         })
       )
+  }
+  //
+  searchCountriesByCode(code: string): Observable<Country | null> {
+    // return an observable to subscribe somewhere else
+    return this.http.get<any[]>(`${this.apiUrl}/alpha/${code}`).pipe(
+      map((res) => CountryMapper.mapResponseToCountries(res)),
+      map((countries) => (countries.at(0) ?? null)),
+      delay(1000),
+      catchError((error: HttpErrorResponse) => {
+        // console.log(error);
+        let message = 'Unexpected error. Try again later';
+        if (error.status === 404) {
+          message = `A country with the code '${code}' was not found`;
+        }
+        return throwError(() => message)
+      })
+    )
+  }
+  //
+  getBasicCountryByCode(code: string): Observable<BasicCountryInfo | null> {
+    return this.http.get<any[]>(`${this.apiUrl}/alpha/${code}`).pipe(
+      map((res) => CountryMapper.mapResponseToBasicCountry(res)),
+      map((basicCountries) => (basicCountries.at(0) ?? null)),
+      delay(1000),
+      catchError((error: HttpErrorResponse) => {
+        // console.log(error);
+        let message = 'Unexpected error. Try again later';
+        if (error.status === 404) {
+          message = `A country with the code '${code}' was not found`;
+        }
+        return throwError(() => message)
+      })
+    )
   }
 }

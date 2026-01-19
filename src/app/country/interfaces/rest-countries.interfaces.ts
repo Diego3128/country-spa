@@ -1,3 +1,9 @@
+export interface BasicCountryInfo {
+  name: Name;
+  cca2: string;
+  flags: Flags;
+}
+
 export interface Country {
   name: Name;
   independent: boolean;
@@ -14,6 +20,7 @@ export interface Country {
   fifa?: string;
   continents: string[];
   flags: Flags;
+  borders: string[];
 }
 
 export interface Name {
