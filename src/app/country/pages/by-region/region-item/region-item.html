@@ -1,0 +1,7 @@
+<button
+  (click)="selectRegion(regionName())"
+  class="btn btn-soft btn-secondary disabled:btn-disabled"
+  [disabled]="isDisabled()"
+>
+  {{ regionName() }}
+</button>

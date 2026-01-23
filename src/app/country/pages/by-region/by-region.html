@@ -1,3 +1,16 @@
-<!-- <app-country-search (newSearch)="onSearchRegion($event)" placeholder="Search by region" /> -->
+<div class="flex flex-wrap gap-2 justify-center">
+  @for (regionItem of regionList; track regionItem) {
+    <app-region-item
+      [regionName]="regionItem"
+      [isDisabled]="selectedRegion() === regionItem"
+      (regionSelected)="selectedRegion.set($event)"
+    />
+  }
+</div>
 
-<app-country-list [countries]="[]" />
+<app-country-list
+  [countries]="regionResource.value() ?? []"
+  [errorMessage]="regionResource.error()?.cause ?? undefined"
+  [isLoading]="regionResource.isLoading()"
+  [tableCaption]="`Countries by region ${selectedRegion() ?? ''}`"
+/>

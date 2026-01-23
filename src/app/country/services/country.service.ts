@@ -8,13 +8,13 @@ import { CountryMapper } from "../mappers/country-mapper";
   providedIn: 'root'
 })
 export class CountryService {
-  private readonly apiUrl = 'https://restcountries.com/v3.1';
 
   http = inject(HttpClient);
 
   byCapitalCacheResults = new Map<string, Country[]>()
 
   byCountryCacheResults = new Map<string, Country[]>()
+
 
   searchCountriesByCapital(capital: string): Observable<Country[]> {
     capital = capital.toLocaleLowerCase();
@@ -87,6 +87,33 @@ export class CountryService {
         let message = 'Unexpected error. Try again later';
         if (error.status === 404) {
           message = `A country with the code '${code}' was not found`;
+        }
+        return throwError(() => message)
+      })
+    )
+  }
+
+  private readonly apiUrl = 'https://restcountries.com/v3.1';
+
+
+  //
+  byRegionCacheResults = new Map<string, Country[]>()
+
+  getCountriesByRegion(region: string): Observable<Country[]> {
+    // check cache
+    if (this.byRegionCacheResults.has(region)) {
+      return of(this.byRegionCacheResults.get(region) as Country[])
+    }
+
+    return this.http.get<any[]>(`${this.apiUrl}/region/${region}`).pipe(
+      map((response) => CountryMapper.mapResponseToCountries(response)),
+      tap((countries) => { this.byRegionCacheResults.set(region, countries) }),
+      delay(1000),
+      catchError((error: HttpErrorResponse) => {
+        // console.log(error);
+        let message = 'Unexpected error. Try again later';
+        if (error.status === 404) {
+          message = `Countries under the '${region}' were not found`;
         }
         return throwError(() => message)
       })
