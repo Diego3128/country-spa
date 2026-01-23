@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, delay, map, Observable, of, throwError } from "rxjs";
+import { catchError, delay, map, Observable, of, tap, throwError } from "rxjs";
 import { Country, BasicCountryInfo } from '../interfaces/rest-countries.interfaces';
 import { CountryMapper } from "../mappers/country-mapper";
 
@@ -12,10 +12,21 @@ export class CountryService {
 
   http = inject(HttpClient);
 
+  byCapitalCacheResults = new Map<string, Country[]>()
+
+  byCountryCacheResults = new Map<string, Country[]>()
+
   searchCountriesByCapital(capital: string): Observable<Country[]> {
+    capital = capital.toLocaleLowerCase();
+    // return cache result if it exists
+    if (this.byCapitalCacheResults.has(capital)) {
+      // get from cache
+      return of(this.byCapitalCacheResults.get(capital) as Country[]);
+    }
     // return an observable to subscribe somewhere else
     return this.http.get<any[]>(`${this.apiUrl}/capital/${capital}`).pipe(
       map((res) => CountryMapper.mapResponseToCountries(res)),
+      tap((countries) => { this.byCapitalCacheResults.set(capital, countries) }),
       catchError((error: HttpErrorResponse) => {
         let message = 'Unexpected error. Try again later';
         if (error.status === 404) {
@@ -27,11 +38,18 @@ export class CountryService {
   }
   //
   searchCountriesByName(query: string): Observable<Country[]> {
-    console.log({ query });
+    query = query.toLocaleLowerCase();
+
+    if (this.byCountryCacheResults.has(query)) {
+      // get from cache
+      return of(this.byCountryCacheResults.get(query) as Country[])
+    }
+
     return this.http.get<any[]>(`${this.apiUrl}/name/${query}`)
       .pipe(
         delay(1000),
         map((res) => CountryMapper.mapResponseToCountries(res)),
+        tap((countries) => { this.byCountryCacheResults.set(query, countries) }),
         catchError((error: HttpErrorResponse) => {
           let message = 'Unexpected error. Try again later';
           if (error.status === 404) {

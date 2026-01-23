@@ -35,7 +35,6 @@ export class CountrySearch implements AfterViewInit, OnDestroy {
       })
     ).subscribe({
       next: (value) => {
-        console.log({ value });
         this.onSearch(value);
       }
     })
