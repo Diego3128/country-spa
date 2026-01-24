@@ -1,4 +1,8 @@
-<app-country-search (newSearch)="searchValue.set($event)" placeholder="Search by capital" />
+<app-country-search
+  (newSearch)="searchValue.set($event)"
+  placeholder="Search by capital"
+  [initialValue]="searchValue()"
+/>
 
 <app-country-list
   [tableCaption]="'Countries by capital'"

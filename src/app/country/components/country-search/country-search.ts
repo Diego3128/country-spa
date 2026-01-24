@@ -11,6 +11,8 @@ export class CountrySearch implements AfterViewInit, OnDestroy {
 
   placeholder = input<string>('Search');
 
+  initialValue = input<string>('');
+
   onSearch = (value: string = '') => {
     if (!value) return;
     this.newSearch.emit(value);

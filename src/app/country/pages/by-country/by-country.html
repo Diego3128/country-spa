@@ -1,4 +1,8 @@
-<app-country-search (newSearch)="search.set($event)" placeholder="Search by country" />
+<app-country-search
+  (newSearch)="search.set($event)"
+  placeholder="Search by country"
+  [initialValue]="search()"
+/>
 
 <app-country-list
   [tableCaption]="'Countries by name'"
