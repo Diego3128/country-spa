@@ -2,6 +2,8 @@
 
 A modern Angular application to search, explore and view detailed information about countries of the world.
 
+![Country Page](./public/images/image-1.png)
+
 ## Features
 
 - Search countries by name
